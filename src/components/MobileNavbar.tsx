@@ -9,20 +9,29 @@ import {
   SunIcon,
   UserIcon,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { useState } from "react";
+import Link from "next/link";
 import { useAuth, useUser, SignInButton, SignOutButton } from "@clerk/nextjs";
 import { useTheme } from "next-themes";
-import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 
 function MobileNavbar() {
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const { isSignedIn } = useAuth();
+  const { user } = useUser();
   const { theme, setTheme } = useTheme();
-  const { user } = useUser(); // 👈 useUser hook instead of currentUser()
 
-  const usernameOrEmail = user?.username || user?.emailAddresses?.[0]?.emailAddress.split("@")[0];
+  const usernameOrEmail =
+    user?.username || user?.emailAddresses?.[0]?.emailAddress.split("@")[0];
+
+  const handleNavClick = () => setShowMobileMenu(false);
 
   return (
     <div className="flex md:hidden items-center space-x-2">
@@ -43,12 +52,19 @@ function MobileNavbar() {
             <MenuIcon className="h-5 w-5" />
           </Button>
         </SheetTrigger>
+
         <SheetContent side="right" className="w-[300px]">
           <SheetHeader>
             <SheetTitle>Menu</SheetTitle>
           </SheetHeader>
+
           <nav className="flex flex-col space-y-4 mt-6">
-            <Button variant="ghost" className="flex items-center gap-3 justify-start" asChild>
+            <Button
+              variant="ghost"
+              className="flex items-center gap-3 justify-start"
+              asChild
+              onClick={handleNavClick}
+            >
               <Link href="/">
                 <HomeIcon className="w-4 h-4" />
                 Home
@@ -57,20 +73,36 @@ function MobileNavbar() {
 
             {isSignedIn ? (
               <>
-                <Button variant="ghost" className="flex items-center gap-3 justify-start" asChild>
+                <Button
+                  variant="ghost"
+                  className="flex items-center gap-3 justify-start"
+                  asChild
+                  onClick={handleNavClick}
+                >
                   <Link href="/notifications">
                     <BellIcon className="w-4 h-4" />
                     Notifications
                   </Link>
                 </Button>
-                <Button variant="ghost" className="flex items-center gap-3 justify-start" asChild>
+
+                <Button
+                  variant="ghost"
+                  className="flex items-center gap-3 justify-start"
+                  asChild
+                  onClick={handleNavClick}
+                >
                   <Link href={`/profile/${usernameOrEmail}`}>
                     <UserIcon className="w-4 h-4" />
                     Profile
                   </Link>
                 </Button>
+
                 <SignOutButton>
-                  <Button variant="ghost" className="flex items-center gap-3 justify-start w-full">
+                  <Button
+                    variant="ghost"
+                    className="flex items-center gap-3 justify-start w-full"
+                    onClick={handleNavClick}
+                  >
                     <LogOutIcon className="w-4 h-4" />
                     Logout
                   </Button>
@@ -78,7 +110,11 @@ function MobileNavbar() {
               </>
             ) : (
               <SignInButton mode="modal">
-                <Button variant="default" className="w-full">
+                <Button
+                  variant="default"
+                  className="w-full"
+                  onClick={handleNavClick}
+                >
                   Sign In
                 </Button>
               </SignInButton>
